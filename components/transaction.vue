@@ -34,6 +34,8 @@ const props = defineProps({
   transaction: Object,
 });
 
+const emit = defineEmits(["deleted"]);
+
 const isIncom = computed(() => {
   return props.transaction.type === "Income";
 });
@@ -55,7 +57,6 @@ const toast = useToast(); // from nuxt ui
 const supabase = useSupabaseClient();
 
 const deleteTransaction = async () => {
-  console.log(898);
   try {
     isLoading.value = true;
     await supabase.from("transactions").delete().eq("id", props.transaction.id);
@@ -65,6 +66,8 @@ const deleteTransaction = async () => {
       icon: "i-heroicons-check-circle",
       color: "green",
     });
+
+    emit("deleted", props.transaction.id);
   } catch (error) {
     toast.add({
       title: "Transaction deleted",
