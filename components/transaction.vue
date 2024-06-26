@@ -21,6 +21,7 @@
             color="white"
             variant="ghost"
             trailing-icon="i-heroicons-ellipsis-horizontal"
+            :loading="isLoading"
           />
         </UDropdown>
       </div>
@@ -48,6 +49,33 @@ const iconColor = computed(() => {
 });
 
 const { currency } = useCurrency(props.transaction.amount);
+
+const isLoading = ref(false);
+const toast = useToast(); // from nuxt ui
+const supabase = useSupabaseClient();
+
+const deleteTransaction = async () => {
+  console.log(898);
+  try {
+    isLoading.value = true;
+    await supabase.from("transactions").delete().eq("id", props.transaction.id);
+
+    toast.add({
+      title: "Transaction deleted",
+      icon: "i-heroicons-check-circle",
+      color: "green",
+    });
+  } catch (error) {
+    toast.add({
+      title: "Transaction deleted",
+      icon: "i-heroicons-exclamation-circle",
+      color: "red",
+    });
+  } finally {
+    isLoading.value = false;
+  }
+};
+
 const items = [
   [
     {
@@ -58,7 +86,7 @@ const items = [
     {
       label: "Delete",
       icon: "i-heroicons-trash-20-solid",
-      click: () => console.log("Delete"),
+      click: deleteTransaction,
     },
   ],
 ];
