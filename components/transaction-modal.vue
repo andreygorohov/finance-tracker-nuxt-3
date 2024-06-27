@@ -146,6 +146,7 @@ const save = async () => {
       title: "Transaction not saved",
       description: e.message,
       icon: "i-heroicons-exclamation-circle",
+      color: "red",
     });
   } finally {
     isLoading.value = false;
