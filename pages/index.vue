@@ -12,14 +12,14 @@
       color="green"
       title="Income"
       :amount="incomeTotal"
-      :last-amount="4100"
+      :last-amount="prevIncomeTotal"
       :loading="pending"
     />
     <Trend
       color="red"
       title="Expense"
       :amount="expenseTotal"
-      :last-amount="3800"
+      :last-amount="prevExpenseTotal"
       :loading="pending"
     />
     <Trend
@@ -76,12 +76,14 @@
 <script setup>
 import { transactionViewOptions } from "~/constants";
 const selectedView = ref(transactionViewOptions[1]);
-
 // const supabase = useSupabaseClient(); // moved to global store
 
 // const transactions = ref([]); // moved to global store
 // const isLoading = ref(false); // moved to global store
 const isOpen = ref(false); // for modal
+
+const { current, previous } = useSelectedTimePeriod(selectedView);
+
 const {
   pending,
   refresh,
@@ -92,9 +94,20 @@ const {
     expenseTotal,
     grouped: { byDate },
   },
-} = useFetchTransactions();
+} = useFetchTransactions(current);
 
-await refresh();
+const {
+  refresh: refreshPrevious,
+  transactions: {
+    incomeTotal: prevIncomeTotal,
+    expenseTotal: prevExpenseTotal,
+  },
+} = useFetchTransactions(previous);
+
+await Promise.all([refresh(), refreshPrevious()]); //88 lesson
+
+// await refresh(); // called in useFetchTransactions
+
 // moved to global store
 // const income = computed(() =>
 //   transactions.value.filter((t) => t.type === "Income")
