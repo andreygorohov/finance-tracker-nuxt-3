@@ -7,7 +7,7 @@
       }"
     >
       <template #header> Add Transaction </template>
-      <UForm :state="state">
+      <UForm :state="state" :schema="schema" ref="form" @submit.prevent="save">
         <UFormGroup
           :required="true"
           label="Transaction Type"
@@ -57,6 +57,7 @@
             placeholder="Category"
             :options="categories"
             v-model="state.category"
+            v-if="state.type === 'Expense'"
           />
         </UFormGroup>
 
@@ -72,22 +73,71 @@
 //   isOpen: Boolean,
 // });
 import { categories, types } from "~/constants";
+import { z } from "zod"; // for validation
 // альтернатива
 const props = defineProps({
   modelValue: Boolean,
 });
 
-const state = ref({
+const emit = defineEmits(["update:modelValue"]);
+
+// validation
+const defaultSchema = z.object({
+  created_at: z.string(),
+  description: z.string().optional(),
+  amount: z.number().positive("Amount needs to be more than 0"),
+});
+const incomeSchema = z.object({
+  type: z.literal("Income"),
+});
+const expenseSchema = z.object({
+  type: z.literal("Expense"),
+  category: z.enum(categories),
+});
+const investmentSchema = z.object({
+  type: z.literal("Investment"),
+});
+const savingSchema = z.object({
+  type: z.literal("Saving"),
+});
+const schema = z.intersection(
+  z.discriminatedUnion("type", [
+    incomeSchema,
+    expenseSchema,
+    investmentSchema,
+    savingSchema,
+  ]),
+  defaultSchema
+);
+const form = ref();
+const save = async () => {
+  // form.value.validate();
+  if (form.value.errors.length) return;
+};
+
+const initialState = {
   type: undefined,
   amount: 0,
   created_at: undefined,
   description: undefined,
   category: undefined,
+};
+const state = ref({
+  ...initialState,
 });
 
-const emit = defineEmits(["update:modelValue"]);
+const resetForm = () => {
+  Object.assign(state.value, initialState);
+  form.value.clear();
+};
+
 const isOpen = computed({
   get: () => props.modelValue,
-  set: (value) => emit("update:modelValue", value),
+  set: (value) => {
+    if (!value) {
+      resetForm();
+    }
+    emit("update:modelValue", value);
+  },
 });
 </script>
