@@ -9,3 +9,17 @@
     </div>
   </header>
 </template>
+
+<script setup>
+// after auth
+const user = useSupabaseUser();
+watch(
+  user,
+  (user) => {
+    if (user) {
+      console.log(user);
+    }
+  },
+  { immediate: true }
+);
+</script>
