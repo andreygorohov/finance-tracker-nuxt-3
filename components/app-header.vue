@@ -38,13 +38,13 @@
 const supabase = useSupabaseClient();
 const user = useSupabaseUser();
 const items = [
-  // [
-  //   {
-  //     label: user.value?.email,
-  //     slot: "account",
-  //     disabled: true,
-  //   },
-  // ],
+  [
+    {
+      label: user.value?.email,
+      slot: "account",
+      disabled: true,
+    },
+  ],
   [
     {
       label: "Settings",

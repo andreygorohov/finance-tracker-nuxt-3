@@ -8,7 +8,7 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "seed": "node seed.js"
+    "seed": "node seed.mjs"
   },
   "dependencies": {
     "@nuxt/ui": "^2.17.0",

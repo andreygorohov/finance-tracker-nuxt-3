@@ -53,26 +53,21 @@ const iconColor = computed(() => {
 const { currency } = useCurrency(props.transaction.amount);
 
 const isLoading = ref(false);
-const toast = useToast(); // from nuxt ui
+const { toastSuccess, toastError } = useAppToast();
 const supabase = useSupabaseClient();
-
 const deleteTransaction = async () => {
   try {
     isLoading.value = true;
     await supabase.from("transactions").delete().eq("id", props.transaction.id);
 
-    toast.add({
+    toastSuccess({
       title: "Transaction deleted",
-      icon: "i-heroicons-check-circle",
-      color: "green",
     });
 
     emit("deleted", props.transaction.id);
   } catch (error) {
-    toast.add({
-      title: "Transaction deleted",
-      icon: "i-heroicons-exclamation-circle",
-      color: "red",
+    toastError({
+      title: "Transaction was not deleted",
     });
   } finally {
     isLoading.value = false;
