@@ -75,7 +75,7 @@
 
 <script setup>
 import { transactionViewOptions } from "~/constants";
-const selectedView = ref(transactionViewOptions[1]);
+const selectedView = ref(transactionViewOptions[0]);
 // const supabase = useSupabaseClient(); // moved to global store
 
 // const transactions = ref([]); // moved to global store
